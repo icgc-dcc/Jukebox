@@ -1,10 +1,20 @@
-import os
+import os 
 c = get_config()
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE'] 
 
 spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
-c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd }) 
+c.DockerSpawner.extra_create_kwargs.update(
+  { 'command': spawn_cmd,
+    'host_config':{ 'cap_add': ["SYS_ADMIN"],
+                    'devices': [{'PathOnHost' : '/dev/fuse',
+                                 'PathInContainer':'/dev/fuse',
+                                 'CgroupPermissions':'rwm'
+                                }],
+                    'security-opt': ["apparmour:unconfined"]
+    }
+  }
+)
 
 network_name = os.environ['DOCKER_NETWORK_NAME']
 c.DockerSpawner.use_internal_ip = True 
