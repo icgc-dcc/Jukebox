@@ -5,15 +5,15 @@ c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
 
 spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update(
-  { 'command': spawn_cmd,
-    'host_config':{ 'cap_add': ["SYS_ADMIN"],
+ { 'command': spawn_cmd,
+    'host_config':{ 'CapAdd': ["SYS_ADMIN"],
                     'devices': [{'PathOnHost' : '/dev/fuse',
                                  'PathInContainer':'/dev/fuse',
                                  'CgroupPermissions':'rwm'
                                 }],
-                    'security-opt': ["apparmour:unconfined"]
+                    'SecurityOpt': ["apparmor:unconfined"]
     }
-  }
+ }
 )
 
 network_name = os.environ['DOCKER_NETWORK_NAME']
