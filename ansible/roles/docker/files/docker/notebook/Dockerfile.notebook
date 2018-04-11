@@ -45,10 +45,10 @@ RUN test -d work && rmdir work; true
 ADD --chown=jovyan:users demo.ipynb .
 ADD --chown=jovyan:users collab.ipynb .
 RUN mv /icgc/icgc-storage-client /home/jovyan/icgc-storage-client
-RUN chown -R jovyan:users /home/jovyan
 RUN mkdir ~jovyan/collab
 RUN echo 'function addPath { export PATH=$PATH:$1 ; }' >> ~jovyan/.bashrc
 RUN echo 'addPath ~/icgc-storage-client/bin' >> ~jovyan/.bashrc
 RUN echo 'export STORAGE_PROFILE=collab' >> ~jovyan/.bashrc
 RUN echo "alias mount_collab='icgc-storage-client mount --cache-metadata --daemonize --mount-point collab'" >> ~jovyan/.bashrc
 RUN echo 'umask 077' >> ~jovyan/.bashrc
+RUN chown -R jovyan:users /home/jovyan

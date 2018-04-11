@@ -38,7 +38,6 @@ services:
       PORT: ${PORT}
     env_file:
       - ~/secrets/jupyterhub_oauth.env
-      - ~/config/jupyterhub.env
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
 

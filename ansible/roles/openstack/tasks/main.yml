@@ -40,6 +40,7 @@
     wait: yes
   delegate_to: localhost
   register: ip_data
+  when: creation_data.changed
 
 - name: Pause to allow ssh server time to start
   shell: sleep 45 
@@ -51,5 +52,13 @@
 - name: Update local host with ip address of new openstack instance
   shell: 'echo "{{ ip_data.floating_ip.floating_ip_address }} \t {{ inventory_hostname }}" >> /etc/hosts' 
   delegate_to: localhost
+  when: ip_data.changed
 
-
+- name: Copy over the ssh keys for everyone whose allowed to connect to this server 
+  copy:
+    src: ~/secrets/ssh/authorized_keys 
+    dest: ~/ubuntu/.ssh/authorized_keys 
+    force: yes
+    mode: "u=rw,g=,o="
+    owner: ubuntu
+  when: creation_data.changed
