@@ -51,3 +51,5 @@ networks:
   default:
     external:
       name: ${DOCKER_NETWORK_NAME}
+logging:
+  driver: syslog
