@@ -27,11 +27,13 @@
   become: true
   become_user: "{{ jupyterhub_user }}"
   shell: "cp {{ certbot_cert }} {{ home }}/secrets/ssl/"
+  ignore_errors: true
 
 - name: Copy our certbot key into our secrets directory
   become: true
   become_user: "{{ jupyterhub_user }}"
   shell: "cp {{ certbot_key }} {{ home }}/secrets/ssl/" 
+  ignore_errors: true
 
 - name: Set permissions on our build file
   shell: chmod 755 "{{ home }}/docker/build.sh"
