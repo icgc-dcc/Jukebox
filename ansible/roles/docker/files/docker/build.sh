@@ -3,7 +3,7 @@
 
 here=$(dirname $0)
 cd $here
-. .env
+. ~/config/jupyterhub.env 
 
 docker network inspect ${DOCKER_NETWORK_NAME} >/dev/null 2>&1 || docker network create ${DOCKER_NETWORK_NAME}
 
