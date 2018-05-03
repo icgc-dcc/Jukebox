@@ -1,6 +1,6 @@
 # Destroy our VM instance 
 # the instance
-- name: Creating VM Instances with Shade
+- name: Tearing down Virtual Machine
   os_server:
     state: absent 
     auth:
@@ -8,6 +8,7 @@
       username: "{{ login_username }}"
       password: "{{ login_password }}"
       project_name: "{{ login_project_name }}"
+      domain_name: "default"
     name: "{{ inventory_hostname }}"
     key_name: "{{ keypair_name }}"
     meta:
