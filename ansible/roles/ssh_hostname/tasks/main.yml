@@ -3,6 +3,10 @@
   shell: ssh-keygen -R "{{ inventory_hostname }}" -f ~/.ssh/known_hosts
   connection: local
 
+- name: Remove the old ip entry from ~/.ssh/known_hosts 
+  shell: ssh-keygen -R "{{ host_ip }}" -f ~/.ssh/known_hosts
+  connection: local
+
 - name: Add new hostname identity to the ~/.ssh/known_hosts file 
   shell: "ssh-keyscan jupyter >> ~/.ssh/known_hosts"
   connection: local
