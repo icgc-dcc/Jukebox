@@ -25,6 +25,7 @@
   shell: "certbot certonly -d jupyterhub.cancercollaboratory.org --agree-tos --email {{ certbot_email }} --standalone -q"
   args:
     creates: "{{ certbot_cert }}" 
+  ignore_errors: true
 
 - name: Grant jupyterhub group permission to find the certs
   become: true
@@ -34,3 +35,4 @@
     group: "{{ jupyterhub_group }}"
     mode: "g+x"
   with_items: [ live, archive ]
+  ignore_errors: true
