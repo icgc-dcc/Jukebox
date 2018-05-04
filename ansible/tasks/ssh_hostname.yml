@@ -8,6 +8,5 @@
   vars_files:
     - "../vars/main.yml"
     - "{{ secrets_file }}"
-    - "../group_vars/all/main.yml"
   roles:
     - ../roles/ssh_hostname
