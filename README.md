@@ -14,6 +14,11 @@
 
 Jukebox is a simple way of deploying JupyterHub to your teams Openstack cloud. We have gone ahead and created playbooks and roles for ansible that will allow you to launch a VM, configure it with the required packages, deploy certificates, and finally allow your users to login with their google IDs!
 
+
+<p align="center">
+    <img alt="arch" title="EGO Architecture" src="img/jukebox.png" width="480">
+</p>
+
 ## Features
 
 - Automated VM creation with Shade plugin for Ansible
