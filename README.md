@@ -12,7 +12,7 @@
 
 ## Introduction
 
-Jukebox is a simple way of deploying JupyterHub to your teams Openstack cloud. We have gone ahead and created playbooks and roles for ansible that will allow you to launch a VM, configure it with the required packages, deploy certificates, and finally allow your users to login with their google IDs!
+Jukebox is a simple way of deploying JupyterHub to your team's Openstack cloud. We have gone ahead and created playbooks and roles for ansible that will allow you to launch a VM, configure it with the required packages, deploy certificates, and finally allow your users to login with their google IDs!
 
 
 <p align="center">
