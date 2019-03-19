@@ -15,4 +15,4 @@ use_oauth: false
 use_daco: false
 
 # We don't need to mount anything special for ssl 
-ssl: ""
+config: ""
