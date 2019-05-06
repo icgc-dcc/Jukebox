@@ -7,6 +7,6 @@ RUN pip install --no-cache jupyterhub
 RUN pip install icgc overture-song 
 
 # Copy over our web customizations 
-ENV notebook_path=/opt/conda/lib/python3.6/site-packages/notebook/
+ENV notebook_path=/opt/conda/lib/python3.7/site-packages/notebook/
 ADD ./www_custom/ /tmp/www_custom/
 RUN cp -a /tmp/www_custom/* $notebook_path
