@@ -2,3 +2,6 @@
 #
 certbot_dir: "/etc/letsencrypt/live/{{ host }}"
 certbot_email: "<your email goes here>"
+certbot_cert: "{{ certbot_dir }}/cert.pem"
+certbot_key: "{{ certbot_dir }}/privkey.pem"
+ssl_dir: "{{ config_dir }}"
