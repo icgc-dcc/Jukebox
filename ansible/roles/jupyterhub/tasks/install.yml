@@ -19,3 +19,12 @@
 
 - name: "Pull jupyterhub image"
   shell: "docker pull {{ jupyterhub_image }}"
+  when: not isLocal
+
+- name: Copy over certs and setup config files so SSL will work locally
+  shell: "cp {{cert_dir}}/*.pem {{ config_dir }}"
+  when: isLocal
+
+- name: "Build jupyterhub image - {{ jupyterhub_image }}"
+  shell: docker build -t "{{jupyterhub_image}}" "{{docker_file}}"
+  when: isLocal

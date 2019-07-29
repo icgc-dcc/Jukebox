@@ -1,0 +1,6 @@
+# EGO authentication 
+ego_secrets: ~/secrets/ego.yml
+#ego_base_url: '' # set in secrets file
+#ego_client_id:    '' # set in secrets file
+#ego_client_secret: '' # set this in secrets file
+#ego_client_scope: ''         # set this in secrets file

@@ -13,6 +13,7 @@ RUN pip install --upgrade pip
 RUN pip install dockerspawner
 RUN pip install jupyterhub-dummyauthenticator
 RUN pip install oauthenticator requests-oauthlib
+RUN pip install rauth
 
 # symbolic link to the web page customization section of the juptyterhub module 
 RUN set -x; ln -s $HUB_DIR $SERVICE_DIR/www
@@ -24,7 +25,7 @@ RUN mkdir $SSL
 #ADD ./jupyterhub_config.py $SERVICE_DIR/
 
 # Copy in our daco authentication code over into the oauthenticator module
-COPY ./auth_daco/* $PYTHON_LIB/oauthenticator/
+COPY ./auth_ego/* $PYTHON_LIB/oauthenticator/
 
 # Copy in all of our custom files (add to / replace existing files in www)
 COPY ./www_custom/ $SERVICE_DIR/www_custom/

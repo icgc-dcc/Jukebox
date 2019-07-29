@@ -58,18 +58,16 @@ if use_oauth.lower() == 'true':
     c.GoogleOAuthenticator.client_id = "{{ oauth_client_id }}"
     c.GoogleOAuthenticator.client_secret = "{{ oauth_client_secret }}"
 
-# Use DACO only with OAuth
-use_daco="{{ use_daco }}"
-if use_daco.lower() == 'true':
-    from oauthenticator.daco_client import DacoClient
-    from oauthenticator.daco import DacoOAuthenticator
 
-    c.DacoOAuthenticator.daco_base_url = "{{ daco_base_url }}"
-    c.DacoOAuthenticator.daco_client_key = "{{ daco_client_key }}"
-    c.DacoOAuthenticator.daco_client_secret = "{{ daco_client_secret }}"
-    c.DacoOAuthenticator.daco_token = "{{ daco_token }}"
-    c.DacoOAuthenticator.daco_token_secret = "{{ daco_token_secret }}"
-    c.JupyterHub.authenticator_class = DacoOAuthenticator
+use_ego="{{ use_ego }}"
+if use_ego.lower() == 'true':
+    from oauthenticator.ego_client import EgoClient
+    from oauthenticator.ego import EgoOAuthenticator
 
+    c.EgoOAuthenticator.ego_base_url = "{{ ego_base_url }}"
+    c.EgoOAuthenticator.ego_client_id = "{{ ego_client_id }}"
+    c.EgoOAuthenticator.ego_client_secret = "{{ ego_client_secret }}"
+    c.EgoOAuthenticator.ego_client_scope = "{{ ego_client_scope }}"
+    c.JupyterHub.authenticator_class = EgoOAuthenticator
 else:
     c.JupyterHub.authenticator_class = 'dummyauthenticator.DummyAuthenticator'
