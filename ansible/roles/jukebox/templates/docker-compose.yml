@@ -28,6 +28,8 @@ services:
       - "{{ jupyterhub_port }}:{{ jupyterhub_port }}"
     command: >
       jupyterhub -f /srv/jupyterhub/config/jupyterhub_config.py
+  {{ ego_setup }}
+  {{ postgres_setup }}
 
 volumes:
   data:
