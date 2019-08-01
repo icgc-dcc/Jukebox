@@ -16,10 +16,15 @@
       ego_client_id:    'jupyter'
       ego_client_secret: 'jupyter' 
       ego_policy: 'egoAccess'
-      ego_client_scope: '{{ego_policy}}.READ'      
+      ego_access: 'READ'
+      ego_client_scope: '{{ego_policy}}.{{ego_access}}'      
       ego_user_email: ''
       ego_local_port: 8080
-      ```  
+      ```
+    Note: <br/>
+    - ego_client_id and ego_client_secret are used to set jupyterHUB as an application in ego
+    - ego_policy, ego_access & ego_user_email are used to add the user into ego with the defined policy.access permission
+    - ego_local_port is the localhost port where ego is accessible from outside docker
          
 3. Run `ansible-playbook build-local.yml`, and wait for it to finish installing.
 
