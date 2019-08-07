@@ -23,7 +23,6 @@ services:
       - "data:{{ data_mount_point }}"
       - "{{ share_dir }}:{{ share_mount }}"
       - "{{ config_dir }}:{{ config_mount }}"
-      {{ config }}
     ports:
       - "{{ jupyterhub_port }}:{{ jupyterhub_port }}"
     command: >
