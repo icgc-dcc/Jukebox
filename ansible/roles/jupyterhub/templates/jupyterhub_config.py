@@ -64,7 +64,8 @@ if use_ego.lower() == 'true':
     from oauthenticator.ego_client import EgoClient
     from oauthenticator.ego import EgoOAuthenticator
 
-    c.EgoOAuthenticator.ego_base_url = "{{ ego_base_url }}"
+    c.EgoOAuthenticator.ego_token_url = "{{ ego_token_url }}"
+    c.EgoOAuthenticator.ego_scope_url = "{{ ego_scope_url }}"
     c.EgoOAuthenticator.ego_client_id = "{{ ego_client_id }}"
     c.EgoOAuthenticator.ego_client_secret = "{{ ego_client_secret }}"
     c.EgoOAuthenticator.ego_client_scope = "{{ ego_client_scope }}"

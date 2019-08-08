@@ -9,34 +9,21 @@ class EgoException(Exception):
 
 
 class EgoClient:
-    def __init__(self, client_id, client_secret, base_url, name='test'):
+    def __init__(self, client_id, client_secret, token_url, scope_url, name='test'):
         self.access_token = None
-        self.base_url = base_url
+        self.scope_url = scope_url
 
         self.service = OAuth2Service(
             name=name,
             client_id=client_id,
             client_secret=client_secret,
-            access_token_url=base_url + "/oauth/token"
+            access_token_url=token_url
         )
 
-    def getAccessToken(self, data={'grant_type': 'client_credentials'}):
-        # add check for whether token is expired
-        if (self.access_token == None):
-            self.access_token = self.service.get_auth_session(data=data, decoder=json.loads).access_token
-
-        return self.access_token
-
-    def get(self, endpoint):
-        return requests.get(
-            self.base_url + endpoint,
-            headers={
-                "Accept": "*/*",
-                "Authorization": "Bearer " + self.getAccessToken()
-            })
-
-    def check_user_scope(self, userEmail='', scope="precious.READ"):        
-        response = self.get("/o/scopes?userName=" + userEmail)
+    def check_user_scope(self, userEmail='', scope="collab.READ"):     
+        data={'grant_type': 'client_credentials'}
+        session = self.service.get_auth_session(data=data, decoder=json.loads)
+        response = session.get(self.scope_url + userEmail)
         
         try:
             if not (scope in response.json()["scopes"]):

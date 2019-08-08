@@ -9,7 +9,8 @@ def log(msg, *args):
     subprocess.run(['logger',msg.format(*args)])
 
 class EgoOAuthenticator(GoogleOAuthenticator):
-    ego_base_url = Unicode(config=True)
+    ego_token_url = Unicode(config=True)
+    ego_scope_url = Unicode(config=True)
     ego_client_id = Unicode(config=True)
     ego_client_secret = Unicode(config=True)
     ego_client_scope = Unicode(config=True)
@@ -25,7 +26,8 @@ class EgoOAuthenticator(GoogleOAuthenticator):
         self.egoClient = EgoClient(
                     client_id       = self.ego_client_id,
                     client_secret   = self.ego_client_secret,
-                    base_url        = self.ego_base_url)
+                    token_url       = self.ego_token_url,
+                    scope_url       = self.ego_scope_url)
 
         try:
             self.egoClient.check_user_scope(email, self.ego_client_scope)
