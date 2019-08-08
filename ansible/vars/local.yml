@@ -9,10 +9,11 @@ home: ~/jukebox
 # across the entire Internet; if you're running this on your local machine,
 # this probably isn't you.
 
-# Use certbot to register and install SSL certificates for this site 
+# Use provided certs for SSL
 use_certbot: false
-use_oauth: false
-use_daco: false
+use_oauth: true
+use_ego: true
+cert_dir: "../roles/jupyterhub/templates"
 
 # We don't need to mount anything special for ssl 
 config: ""

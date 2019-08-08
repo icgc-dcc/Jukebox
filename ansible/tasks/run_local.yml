@@ -6,10 +6,13 @@
     - "../vars/local.yml"
     - "../vars/jukebox.yml"
     - "../vars/docker.yml"
+    - "../vars/docker_local.yml"
     - "../vars/jupyterhub.yml"
     - "../vars/jupyter_notebook.yml"
     - "../vars/oauth.yml"
-    - "../vars/daco.yml"
+    - "../vars/ego.yml"
+    - "{{ oauth_secrets }}"
+    - "{{ ego_secrets }}"
   roles: 
     - "../roles/jukebox"
   connection: local

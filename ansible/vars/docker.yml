@@ -22,3 +22,7 @@ opt_volume: "{{ service_name }}-opt"
 
 # The path to the docker UNIX file socket on the remote machine
 docker_socket: /var/run/docker.sock
+
+#Only set this for local run in docker-local vars
+ego_setup: ""
+postgres_setup: ""

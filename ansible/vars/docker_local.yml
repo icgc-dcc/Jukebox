@@ -1,0 +1,42 @@
+# Docker-local
+# Local uses everything in docker.yml and adds vars for local run
+
+docker_file: "../../jupyterhub-docker/."
+
+ego_image: "overture/ego:latest"
+ego_local_port: "8080"
+ego_server_port: "8081"
+
+postgres_image: "postgres:9.5"
+
+ego_setup: |
+    api:
+        image: "{{ ego_image }}"
+        ports:
+          - "{{ ego_local_port }}:{{ego_server_port}}"
+        environment:
+          - EGO_SERVER_PORT={{ego_server_port}}
+          - EGO_DB_HOST=postgres
+          - EGO_DB_PORT=5432
+          - EGO_DB=ego
+          - EGO_DB_USER=postgres
+          - EGO_DB_PASS=password
+          - EGO_SERVER_GOOGLE_CLIENT_IDS=123456
+          - EGO_SERVER_FACEBOOK_APP_ID=123456
+          - EGO_SERVER_FACEBOOK_SECRET=123456
+          - EGO_ACTIVE_PROFILES=demo
+        depends_on:
+          - postgres
+        volumes:
+          - "~/jukebox/config/V2_1__ego_setup.sql:/usr/src/app/src/main/resources/flyway/sql/V2_1__ego_setup.sql"
+postgres_setup: |
+    postgres:
+        restart: always
+        image: "{{ postgres_image }}"
+        environment:
+          - POSTGRES_DB=ego
+          - POSTGRES_PASSWORD=password
+        expose:
+          - "5432"
+        ports:
+          - "8432:5432"
