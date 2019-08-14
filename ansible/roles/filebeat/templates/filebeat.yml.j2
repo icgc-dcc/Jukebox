@@ -1,0 +1,183 @@
+#=========================== Filebeat prospectors =============================
+
+filebeat.prospectors:
+
+- type: log
+  paths:
+    - /var/log/*.log
+  exclude_lines: ['session opened for user root','session closed for user','mpt3sas_cm0','apparmor']
+  exclude_files: ['/var/log/haproxy.log']
+  tags: ["general"]
+
+- type: log
+  paths:
+    - /var/log/floating_ips.txt
+  tags: ["floatingip","floatingips"]
+
+- type: log
+  paths:
+    - /var/log/syslog
+  exclude_lines: ['mpt3sas0','mpt3sas_cm0','lttng-ust-wait-5','appeared twice with different sysfs paths','affinity_hint subset empty','Referer checking failed - no Referer','apparmor']
+  tags: ["syslog"]
+
+- type: log
+  paths:
+    - /var/log/apache2/error.log
+    - /var/log/apache2/access.log
+  tags: ["apache"]
+
+- type: log
+  paths:
+    - /var/log/nova/*.log
+  exclude_lines: ['Successfully synced instances from host','Unable to refresh my resource provider record','Final resource view','Successfully synced instances from host',]
+  tags: ["nova","openstack"]
+
+- type: log
+  paths:
+    - /var/log/apache2/nova_placement_error.log
+  exclude_lines: ['35b10d2f1f7a4e9b88a4c1c2558b1e81']
+  tags: ["nova","openstack","nova-placement-api"]
+
+- type: log
+  paths:
+    - /var/log/neutron/*.log
+  exclude_lines: ['Duplicate iptables rule detected. This may indicate a bug in the the iptables rule generation code','142.1.177.4']
+  tags: ["neutron","openstack"]
+
+- type: log
+  paths:
+    - /var/log/cinder/*.log
+    - /var/log/apache2/cinder*.log
+  tags: ["cinder","openstack"]
+
+- type: log
+  paths:
+    - /var/log/glance/*.log
+  tags: ["glance","openstack"]
+
+- type: log
+  paths:
+    - /var/log/heat/*.log
+  tags: ["heat","openstack"]
+
+- type: log
+  paths:
+    - /var/log/keystone/*.log
+    - /var/log/apache2/keystone*.log
+  tags: ["keystone","openstack"]
+
+- type: log
+  paths:
+    - /var/log/ceph/*.log
+  exclude_lines: ['failed to encode map','handle_command mon_command','state standby','fault with nothing to send, going to standby','no reply from osd','GET','STATE_ACCEPTING_WAIT_CONNECT_MSG_AUTH']
+  tags: ["ceph"]
+
+- type: log
+  paths:
+    - /var/log/haproxy.log
+  tags: ["haproxy"]
+  exclude_lines: ['galera_cluster']  
+
+- type: log
+  paths:
+    - /var/log/mysql/*.log
+  tags: ["mysql"]
+  exclude_lines: ['Aborted connection']
+
+- type: log
+  paths:
+    - /var/log/rabbitmq/*.log
+  tags: ["rabbitmq"]
+
+- type: log
+  paths:
+    - /var/log/libvirt/*.log
+  exclude_lines: ['lttng-ust-wait-5','virNetSocketReadWire']
+  tags: ["libvirt"]
+
+- type: log
+  paths:
+    - /var/log/zabbix/*.log
+  exclude_lines: ['Warning: HOME environment variable not set. Disabling LTTng-UST per-user tracing.','Cannot open network namespace','ERROR']
+  tags: ["zabbix"]
+
+#============================= Filebeat modules ===============================
+
+filebeat.config.modules:
+  # Glob pattern for configuration loading
+  path: ${path.config}/modules.d/*.yml
+
+  # Set to true to enable config reloading
+  #reload.enabled: true
+
+  # Period on which files under path should be checked for changes
+  #reload.period: 10s
+
+#==================== Elasticsearch template setting ==========================
+
+setup.template.settings:
+  index.number_of_shards: 3
+  #index.codec: best_compression
+  #_source.enabled: false
+setup.template.name: "filebeat"
+setup.template.pattern: "filebeat-*"
+
+#============================== Dashboards =====================================
+# These settings control loading the sample dashboards to the Kibana index. Loading
+# the dashboards is disabled by default and can be enabled either by setting the
+# options here, or by using the `-setup` CLI flag or the `setup` command.
+#setup.dashboards.enabled: true
+
+# The URL from where to download the dashboards archive. By default this URL
+# has a value which is computed based on the Beat name and version. For released
+# versions, this URL points to the dashboard archive on the artifacts.elastic.co
+# website.
+#setup.dashboards.url:
+
+#============================== Kibana =====================================
+
+# Starting with Beats version 6.0.0, the dashboards are loaded via the Kibana API.
+# This requires a Kibana endpoint configuration.
+#setup.kibana:
+
+  # Kibana Host
+  # Scheme and port can be left out and will be set to the default (http and 5601)
+  # In case you specify and additional path, the scheme is required: http://localhost:5601/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:5601
+  #host: "http://172.25.4.20:8086"
+  #host: "https://172.25.4.20:8086"
+#  host: "https://monitor.cancercollaboratory.org:8086"
+#setup.kibana.host: "192.0.2.255:5601"
+#setup.kibana.protocol: "https"
+#setup.kibana.ssl.enabled: true
+#setup.kibana.ssl.certificate: "/etc/ssl/certs/lets.pem"
+#setup.kibana.ssl.key: "/etc/ssl/certs/letskey.pem"
+
+#================================ Outputs =====================================
+
+#----------------------------- Logstash output --------------------------------
+output.logstash:
+  # The Logstash hosts
+  hosts: ["infra.cancercollaboratory.org:6101"]
+  ssl.enabled: true
+
+  # Optional SSL. By default is off.
+  # List of root certificates for HTTPS server verifications
+  #ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+
+  # Certificate for SSL client authentication
+  #ssl.certificate: "/etc/pki/client/cert.pem"
+
+  # Client Certificate Key
+  #ssl.key: "/etc/pki/client/cert.key"
+
+#================================ Logging =====================================
+
+# Sets log level. The default log level is info.
+# Available log levels are: error, warning, info, debug
+#logging.level: debug
+
+# At debug level, you can selectively enable logging only for some components.
+# To enable all selectors use ["*"]. Examples of other selectors are "beat",
+# "publish", "service".
+#logging.selectors: ["*"]

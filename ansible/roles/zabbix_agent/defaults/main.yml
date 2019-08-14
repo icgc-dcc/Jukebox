@@ -1,0 +1,75 @@
+## Zabbix agent conf section
+### zabbix Agent version marjor.minor.revision
+zabbix_agent_major                : '2'
+zabbix_agent_minor                : '2'
+zabbix_agent_revision             : '4'
+zabbix_agent_Server               : "172.25.4.20"  ## List of comma delimited IP addresses (or hostnames) of Zabbix servers.
+zabbix_agent_ServerActive         : "172.25.4.20"
+zabbix_agent_Hostname             : "system.hostname"
+zabbix_agent_LogFile              : "/var/log/zabbix/zabbix_agentd.log"
+zabbix_agent_LogFileSize          : 0    ## 0 - disable automatic log rotation.
+zabbix_agent_DebugLevel           : 3    ## (0) no, (1) critical info (2) error info (3) warnings (4) A lots of infor)
+zabbix_agent_PidFile              : "/var/run/zabbix/zabbix_agentd.pid"
+zabbix_agent_ListenIP             : "0.0.0.0"
+zabbix_agent_ListenPort           : 10050
+zabbix_agent_StartAgents          : 3
+zabbix_agent_EnableRemoteCommands : 0 ## 0 or 1
+zabbix_agent_LogRemoteCommands    : 0 ## 0 or 1
+zabbix_agent_RefreshActiveChecks  : 120 ## checks is refreshed, in sec 60-3600
+#zbx_agent_source_ip               : 192.168.56.150 ## if you want Source IP address for outgoing connections
+
+### Directory configuration
+zabbix_agent_dir_includes         : "/etc/zabbix/zabbix_agentd.d/"
+zabbix_agent_dir_custom           : "/etc/zabbix/zabbix_custom_scripts"
+
+zabbix_agent_custom_scripts_deploy: true ## Deploy custom scripts
+zabbix_agent_custom_apt           : 
+    - sysstat
+
+zabbix_agent_Include              :
+                                    - /etc/zabbix/zabbix_agentd.d/
+zabbix_agent_sudoers              : 
+                                    - comments : "Discovery for disks" 
+                                      sudo     : "zabbix  ALL=NOPASSWD: {{zabbix_agent_dir_custom}}/discovery_disks.pl"
+                                    - comments : "RAID special privileges" 
+                                      sudo     : "zabbix  ALL=NOPASSWD:   /sbin/mdadm --detail *, /sbin/vgs"
+                                    - comments : "IPTSTATE special privileges" 
+                                      sudo     : "zabbix  ALL=NOPASSWD:   /usr/sbin/iptstate"
+## Custom user parmeters section 
+### Variable based parameters
+#zabbix_agent_parameters           :
+#   - name  : apt 
+#     param :
+#       - "UserParameter=custom.apt.security,/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 2"
+#       - "UserParameter=custom.apt.update,/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 1"
+#       - "UserParameter=custom.apt.restart,[ -f /var/run/reboot-required  ] && echo 1 || echo 0"
+#   - name : raid
+#     param :
+#       - "UserParameter=custom.raidstate.md0,grep -A1 md0 /proc/mdstat | grep -c _"
+#       - "UserParameter=custom.raidstate.md1,grep -A1 md1 /proc/mdstat | grep -c _"
+#   - name : disk
+#     param :       
+#       - "UserParameter=custom.lvm.pv_free[*],sudo vgs $1 -o pv_free --units B --noheading  | tr -d B"
+#   - name : iostat
+#     param :  
+#       - "UserParameter=custom.iostat[*],{{zabbix_agent_dir_custom}}/iostat.sh \"$1\" \"$2\""                 
+#       - "UserParameter=vfs.dev.discovery,{{zabbix_agent_dir_custom}}/vfs.dev.discovery.sh"
+### File based parameters   
+zabbix_agent_parameters_files     : 
+   - zabbix_agentd.d/*
+
+##
+## SSH tunnel management
+##   Zabbix by default does not have authentication and encryption 
+##   if your using zabbix to monitor hosts in a non private network you can use ssh tunnel
+zabbix_agent_tunnel             : false
+zabbix_agent_tunnel_user        : "mon"
+zabbix_agent_tunnel_group       : "mon"
+zabbix_agent_tunnel_home        : "/home/{{zabbix_agent_tunnel_user}}"
+zabbix_agent_tunnel_key_options : 'no-pty' #'no-pty,permitopen="localhost:10050"' #Due to bug cant use permitopen for now
+## WARNNING This is TEST KEY PLEASE REPLACE THEM
+zabbix_agent_tunnel_pub_key     : ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCootXD63hexEQnbCmKGC7DjFSWxkqJ2neaC5S6POEdgwo7jQ60JWy0VCm5JS5d2ZNDQh+vi1wZ2cTr6n9X9bAkYhQ/eACmzYBjf8I8AXcqaigAOjRMLADU2qQfZmnRGyOLaGDI/EH52yBjeZHbgQdJOGrB07qgAu2facA2bd6kvI8eLwCx5yjqA+mInYEewRYrr5tUduGFdPhmyoKSGpaEeWWkLhafTj9eGRMSB3unBcMtux+LxXH4TfWgVBmWNVbr2Mcv+M6tYxix/iKniBLBUH/AfM/dTHlk38y2mjemUMUc/HBW+HmH3NXMwOks8po6Iohh8JNhywUlLKN9MvB7
+
+## Compilation of variables (No need to change them unless you have issues)
+zabbix_agent_version            : "{{zabbix_agent_major}}.{{zabbix_agent_minor}}.{{zabbix_agent_revision}}"
+zabbix_agent_ubuntu             : "1:{{zabbix_agent_version}}-1+precise"

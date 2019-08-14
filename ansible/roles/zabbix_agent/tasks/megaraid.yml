@@ -1,0 +1,18 @@
+---
+
+- name: Copy over the megaraid deb package
+  copy: src=megacli_8.07.14-2_all.deb dest=/etc/zabbix/megacli_8.07.14-2_all.deb mode=0644 owner=root group=root
+  tags: megaraid_cli
+
+- name: install megaraid_cli
+  apt: deb=/etc/zabbix/megacli_8.07.14-2_all.deb state=present
+
+- name: create symlink for megacli
+  file: src=/opt/MegaRAID/MegaCli/MegaCli64 dest=/usr/local/bin/megacli owner=root group=root state=link
+
+#- name: generate the megaraid_template.xml
+#  command: /root/Mega/megaraid_template.xml
+
+- name: Copy over the SAScli utility that can display the health of the LSI 9300-8i device
+  copy: src=sas3ircu dest=/etc/zabbix/sas3ircu mode=0755 owner=root group=root
+  tags: sas3ircu

@@ -1,0 +1,36 @@
+#!/bin/bash
+# Source openstack credentials
+export OS_USERNAME="admin"
+export OS_PASSWORD="{{ admin_pass }}"
+export OS_TENANT_NAME="admin"
+export PS1='\u(keystone_admin)@\h:\w\\$ '
+export OS_VOLUME_API_VERSION=2
+export OS_AUTH_URL="https://console.cancercollaboratory.org:5000"
+export OS_PROJECT_DOMAIN_ID="default"
+export OS_USER_DOMAIN_ID="default"
+export OS_IDENTITY_API_VERSION=3
+
+
+# Generate token
+TOKEN=`openstack token issue -f value -c id`
+APITEST=$1
+APIIP={{ hostvars[inventory_hostname]["ansible_bond0.10"].ipv4.address }}
+if [ ${APITEST} = "cinder" ]
+  then response=`curl -g -s -X GET http://$APIIP:8776/v3/160d688a71fa456a8548b03ce9935830/volumes/detail -H "User-Agent: python-cinderclient" -H "Accept: application/json" -H "X-Auth-Token: $TOKEN"| grep -c volumes`
+  elif [ ${APITEST} = "neutron" ]
+  then response=`curl -g -s -X GET http://$APIIP:9696/v2.0/networks/11a3be73-c278-449c-a428-2522a2563c79 -H "User-Agent: openstacksdk/0.9.9 keystoneauth1/2.15.0 python-requests/2.5.1 CPython/2.7.6 Linux/3.13.0-107-generic CPython/2.7.6" -H "Accept: application/json" -H "X-Auth-Token: $TOKEN"| grep -c admin_state_up`
+  elif [ ${APITEST} = "glance" ]
+  then response=`curl -g -s -X GET http://$APIIP:9292/v2/images -H "User-Agent: osc-lib keystoneauth1/2.15.0 python-requests/2.5.1 CPython/2.7.6 Linux/3.13.0-107-generic CPython/2.7.6" -H "X-Auth-Token: $TOKEN" | grep -c images`
+  elif [ ${APITEST} = "nova" ]
+  then response=`curl -g -s -X GET http://$APIIP:8774/v2.1/160d688a71fa456a8548b03ce9935830/servers/detail -H "User-Agent: python-novaclient" -H "Accept: application/json" -H "X-Auth-Token: $TOKEN" | grep -c servers`
+  elif [ ${APITEST} = "heat" ]
+  then response=`curl -g -s -X GET http://$APIIP:8004/v1/160d688a71fa456a8548b03ce9935830/stacks? -H "User-Agent: python-heatclient" -H "Accept: application/json" -H "X-Auth-Token: $TOKEN" | grep -c stacks`
+  elif [ ${APITEST} = "keystone" ]
+  then response=`openstack token issue | grep -c user_id`
+fi
+
+if [ $response -eq 1 ]
+then echo $response
+exit 0
+fi
+echo 0

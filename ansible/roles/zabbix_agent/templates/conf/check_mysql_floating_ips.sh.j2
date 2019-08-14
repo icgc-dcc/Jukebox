@@ -1,0 +1,3 @@
+#!/bin/bash
+#set -x
+mysql -u root -p{{ mysql_root_pass }} -s -r -e "select count(floating_ip_address) from neutron.floatingips;" | tail -n 1

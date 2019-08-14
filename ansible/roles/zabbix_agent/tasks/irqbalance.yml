@@ -1,0 +1,7 @@
+---
+
+- name: Copy over irqbalance custom config
+  copy: src=irqbalance dest=/etc/default/irqbalance mode=0644 owner=root group=root
+  notify: restart irqbalance
+  tags: irqbalance
+

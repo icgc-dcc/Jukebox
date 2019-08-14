@@ -102,3 +102,6 @@ ansible/vars/secrets*
 
 # mypy
 .mypy_cache/
+
+# ansible retry
+*.retry

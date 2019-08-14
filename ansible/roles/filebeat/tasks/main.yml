@@ -1,0 +1,60 @@
+---
+- name: Insert infra.cancercollaboratory.org record in to hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "172.25.4.20     infra.cancercollaboratory.org"
+    state: present
+  when: "'VM' not in group_names"
+
+- name: Insert infra.cancercollaboratory.org record in to hosts for VM's
+  lineinfile:
+    dest: /etc/hosts
+    line: "142.1.177.4     infra.cancercollaboratory.org"
+    state: present
+  when: "'VM' in group_names"
+
+- name: Install filebeat repo for Debian family
+  apt_repository: repo='deb https://artifacts.elastic.co/packages/6.x/apt stable main' state=present
+  when: ansible_os_family == "Debian"
+
+- name: Import elasticsearch apt key for Debian family
+  apt_key: url=https://artifacts.elastic.co/GPG-KEY-elasticsearch state=present
+  when: ansible_os_family == "Debian"
+
+- name: Update apt cache for Debian family
+  apt:
+    update_cache: yes 
+  when: ansible_os_family == "Debian"
+
+- name: Install filebeat for Debian family
+  apt: name=filebeat state=present update_cache=yes
+  notify: restart filebeat
+  when: ansible_os_family == "Debian"
+
+- name: Install filebeat repo for RedHat family
+  yum_repository:
+    name: filebeat
+    description: filebeat repository for RedHat family
+    baseurl: https://artifacts.elastic.co/packages/6.x/yum
+    gpgcheck: no
+  when: ansible_os_family == "RedHat"
+
+- name: Install filebeat for RedHat family
+  yum:
+    name: filebeat
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+- name: Template the filebeat config
+  template: src="filebeat.yml.j2" dest="/etc/filebeat/filebeat.yml" owner=root group=root mode=0600
+  notify: restart filebeat
+  tags: filebeat_config
+
+# SSL cert stuff if needed..
+#
+#- name: Create directory for the SSL certs
+#  file: path=/etc/pki/tls/certs state=directory mode=0755 owner=root group=root
+
+#- name: Copy over the SSL cert used by filebeat
+#  copy: src=filebeat.crt dest=/etc/pki/tls/certs mode=0755 owner=root group=root
+#  notify: restart filebeat

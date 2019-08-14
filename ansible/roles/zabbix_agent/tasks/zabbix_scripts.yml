@@ -1,0 +1,178 @@
+---
+
+#- name: zabbix_agent | Deploy Zabbix sudeors file
+#  template: 
+#     src=conf/zabbix-sudeors.j2 
+#     dest=/etc/sudoers.d/zabbix-sudeors
+#     owner=root
+#     group=root
+#     mode=0640
+#     validate='visudo -cf %s'
+#  register: zabbixSudo
+#  notify: restart zabbix_agent
+
+- name: zabbix_agent | Copy the my.cnf needed by the mysql check
+  template: 
+     src=conf/my.cnf.j2
+     dest=/etc/zabbix/.my.cnf
+     owner=zabbix
+     group=zabbix
+     mode=0400
+  when: "'controller_nodes' in group_names"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Copy the check cluster script 
+  template: 
+     src=conf/check_mysql_cluster_status.sh
+     dest=/etc/zabbix/zabbix_custom_scripts/check_mysql_cluster_status.sh
+     owner=zabbix
+     group=zabbix
+     mode=0500
+  when: inventory_hostname == "controller1"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Copy the mysql check for floating IPs
+  template: 
+     src=conf/check_mysql_floating_ips.sh.j2
+     dest=/etc/zabbix/zabbix_custom_scripts/check_mysql_floating_ips.sh
+     owner=zabbix
+     group=zabbix
+     mode=0500
+  when: inventory_hostname == "controller1"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Copy the check_db.conf needed by the mysql capacity planning checks
+  template: 
+     src=check_db.conf.j2
+     dest=/etc/zabbix/check_db.conf
+     owner=zabbix
+     group=zabbix
+     mode=0400
+  when: "'controller_nodes' in group_names"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Copy the check_api.conf needed by the check_api python script
+  template: 
+     src=check_api.conf.j2
+     dest=/etc/zabbix/check_api.conf
+     owner=zabbix
+     group=zabbix
+     mode=0400
+  when: "'controller_nodes' in group_names"
+  notify: restart zabbix_agent
+
+- name: Create /etc/zabbix/zabbix_agentd.d dir
+  file:
+    path=/etc/zabbix/zabbix_agentd.d
+    state=directory
+    owner=root
+    group=root
+    mode=0755
+
+- name: zabbix_agent | Copy the userparameter_apichecks.conf
+  template: 
+     src=userparameter_apichecks.conf.j2
+     dest=/etc/zabbix/zabbix_agentd.d/userparameter_apichecks.conf
+     owner=root
+     group=root
+     mode=0644
+  when: "'controller_nodes' in group_names"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Copy the check_rabbit.conf needed by the rabbitmq check
+  template: 
+     src=check_rabbit.conf.j2
+     dest=/etc/zabbix/check_rabbit.conf
+     owner=zabbix
+     group=zabbix
+     mode=0400
+  when: "'controller_nodes' in group_names"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Copy User parameters file to zabbix_agentd.d
+  copy: 
+     src="{{item}}"
+     dest=/etc/zabbix/zabbix_agentd.d/
+     owner=root
+     group=root
+     mode=0644
+  with_fileglob: zabbix_agentd.d/*
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Copy User parameters file used for capacity planning to zabbix_agentd.d
+  copy: 
+     src="{{item}}"
+     dest=/etc/zabbix/zabbix_agentd.d/
+     owner=root
+     group=root
+     mode=0644
+  with_fileglob: zabbix_capacity_userparameter/*
+  when: "'controller_nodes' in group_names"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Copy script files used for capacity planning to zabbix_custom_scripts
+  copy: 
+     src="{{item}}"
+     dest=/etc/zabbix/zabbix_custom_scripts/
+     owner=root
+     group=root
+     mode=0755
+  with_fileglob: zabbix_capacity_scripts/*
+  when: "'controller_nodes' in group_names"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Copy shim script used for ip namespaces
+  copy: 
+     src=sudo_shim
+     dest=/usr/local/sbin/sudo_shim
+     owner=root
+     group=root
+     mode=0755
+  when: "'controller_nodes' in group_names"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Copy shim script used for ip namespaces for metadata
+  copy: 
+     src=sudo_shim_meta
+     dest=/usr/local/sbin/sudo_shim_meta
+     owner=root
+     group=root
+     mode=0755
+  when: "'controller_nodes' in group_names"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Create zabbix_custom_scripts Directory
+  file:
+     path="{{zabbix_agent_dir_custom}}"
+     owner=root
+     group=root
+     state=directory
+
+- name: zabbix_agent | Copy custom scripts (discovery, ...)
+  copy:
+     src="{{item}}"
+     dest="{{zabbix_agent_dir_custom}}"
+     owner=root
+     group=root
+     mode=0755
+  with_fileglob:
+     - "zabbix_custom_scripts/*"
+  notify: restart zabbix_agent
+  tags: customscripts
+
+- name: zabbix_agent | Copy sudoers
+  copy: 
+     src=zabbix-sudoers
+     dest=/etc/sudoers.d/zabbix-sudeors
+     owner=root
+     group=root
+     mode=0440
+  tags: sudoers
+#  notify: restart zabbix_agent
+
+#- name: zabbix_agent | apt package for custom scripts
+#  apt:
+#    pkg={{item}}
+#  with_items: zabbix_agent_custom_apt
+#  notify: restart zabbix_agent
+  

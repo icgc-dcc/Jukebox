@@ -1,0 +1,110 @@
+---
+- name: Import Zabbix repo apt key for Debian family
+  apt_key: 
+    url: https://repo.zabbix.com/zabbix-official-repo.key
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Add the Zabbix 4 repo for {{ ansible_distribution_release }}
+  apt_repository:
+    repo: deb http://repo.zabbix.com/zabbix/4.0/ubuntu/ {{ ansible_distribution_release }} main
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install Zabbix repo for RedHat family
+  yum_repository:
+    name: zabbix
+    description: zabbix repository for RedHat family
+    baseurl: https://repo.zabbix.com/zabbix/3.4/rhel/6/x86_64/zabbix-release-3.4-1.el6.noarch.rpm
+    gpgcheck: no
+  when: ansible_os_family == "RedHat"
+
+- name: Install Zabbix for RedHat family
+  yum:
+    name: zabbix-agent
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+- name: zabbix_agent | Install Zabbix agent
+  apt: 
+    name: zabbix-agent 
+    state: latest
+    update_cache: yes
+
+- name: Start zabbix-agent service
+  service:
+    name: zabbix-agent
+    state: started
+
+- name: Enable zabbix-agent service
+  service:
+    name: zabbix-agent
+    enabled: yes
+
+- name: Really enable zabbix-agent service
+  shell: systemctl enable zabbix-agent.service
+    
+- name: Create the zabbix dir for holding the logs when the OS is Ubuntu 16
+  file:
+    path=/var/log/zabbix
+    state=directory
+    mode=0755 
+    owner=zabbix
+    group=zabbix
+
+- name: zabbix_agent | Deploy zabbix pre-shared key
+  template:
+     src="zabbixpsk.j2"
+     dest="/etc/zabbix/zabbix.psk"
+     owner=zabbix
+     group=root
+     mode=0600
+
+- name: zabbix_agent | Deploy zabbix_agentd.conf file
+  template: 
+     src="conf/zabbix_agentd.conf.j2"
+     dest="/etc/zabbix/zabbix_agentd.conf"
+     owner=root
+     group=root
+     mode=0644
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Deploy openrc-admin file for keystone V2
+  template: 
+     src="openrc-admin.j2"
+     dest="/etc/zabbix/openrc-admin"
+     owner=zabbix
+     group=zabbix
+     mode=0640
+  when: "'controller_nodes' in group_names"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Deploy openrc-admin file for keystone V3
+  template: 
+     src="openrc-admin_v3.j2"
+     dest="/etc/zabbix/openrc-admin_v3"
+     owner=zabbix
+     group=zabbix
+     mode=0640
+  when: "'controller_nodes' in group_names"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Deploy zabbix_agentd.conf file if the server is a VM
+  template:
+     src=conf/zabbix_agentd.conf_VM.j2
+     dest=/etc/zabbix/zabbix_agentd.conf
+     owner=root
+     group=root
+     mode=0644
+  when: "'VM' in group_names"
+  notify: restart zabbix_agent
+
+- name: zabbix_agent | Deploy check_api.sh script
+  template:
+     src=check_api.sh.j2
+     dest=/etc/zabbix/zabbix_custom_scripts/check_api.sh
+     owner=root
+     group=root
+     mode=0755
+  notify: restart zabbix_agent
+  when: "'controller_nodes' in group_names"

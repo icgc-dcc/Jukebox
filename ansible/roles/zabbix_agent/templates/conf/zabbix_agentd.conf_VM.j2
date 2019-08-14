@@ -1,0 +1,42 @@
+{% if 'VM' in group_names %}
+Server=142.1.177.4
+{% else %}
+Server={{ zabbix_agent_Server }}
+{% endif %}
+{% if 'compute_nodes' in group_names %}
+ListenIP={{ hostvars[inventory_hostname]["ansible_bond0.10"].ipv4.address }}
+{% endif %}
+{% if 'controller_nodes' in group_names %}
+ListenIP={{ hostvars[inventory_hostname]["ansible_bond0.10"].ipv4.address }}
+{% endif %}
+{% if 'storage_nodes' in group_names %}
+ListenIP={{ hostvars[inventory_hostname]["ansible_bond0.10"].ipv4.address }}
+{% endif %}
+{% if 'VM' in group_names %}
+ListenIP={{ ansible_default_ipv4.address }}
+{% endif %}
+{% if inventory_hostname == "compute2" %}
+Hostname=compute2-r1
+{% elif inventory_hostname == "compute3" %}
+Hostname=compute3-r1
+{% elif inventory_hostname == "compute4" %}
+Hostname=compute4-r1
+{% elif inventory_hostname == "storage2" %}
+Hostname=storage2-r1
+{% elif inventory_hostname == "storage3" %}
+Hostname=storage3-r1
+{% else %}
+Hostname={{ ansible_hostname }}
+{% endif %}
+#ServerActive={{zabbix_agent_Server}}
+PidFile=/var/run/zabbix/zabbix_agentd.pid
+LogFile=/var/log/zabbix/zabbix_agentd.log
+LogFileSize=0
+Include=/etc/zabbix/zabbix_agentd.d/
+EnableRemoteCommands=1
+TLSConnect=psk
+TLSAccept=psk
+TLSPSKFile=/etc/zabbix/zabbix.psk
+TLSPSKIdentity=zabbixpsk
+### Change to debug level only for short time periods ##
+#DebugLevel=4
