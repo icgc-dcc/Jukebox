@@ -1,0 +1,9 @@
+---
+# This playbook play all post common installation for all servers
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  become_user: root
+  roles:
+     - { role: zabbix_agent, tags: zabbix_agent }

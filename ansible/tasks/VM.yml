@@ -1,0 +1,10 @@
+---
+- hosts: VM
+  vars_files:
+    - "~/secrets/zabbix_secrets.yml"
+  become: true
+  become_method: sudo
+  become_user: root
+  roles:
+    - { role: "../roles/zabbix_agent" , tags: zabbix_agent }
+    - { role: "../roles/filebeat", tags: filebeat }

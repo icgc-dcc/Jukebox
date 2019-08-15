@@ -1,0 +1,31 @@
+#!/bin/bash
+
+######################################
+# 2014 by dron, jiri.slezka@slu.cz
+
+# get list of all jails
+JAILS=$(sudo fail2ban-client status | grep "Jail list" |grep -E -o "([-[:alnum:]]*, )*[-[:alnum:]]*$")
+
+#echo $JAILS
+
+echo -e "{"
+echo -e "\t\"data\":["
+
+# cycle through all jails
+IFS=","
+LAST="x"
+for JAIL in $JAILS ; do
+  # trim whitespaces
+  JAIL=$(echo $JAIL | sed -e 's/^ *//' -e 's/ *$//')
+  if [ $LAST != "x" ] ; then
+    echo -e "\t{\"{#F2BJAIL}\":\"$LAST\"},"
+  fi
+  LAST=$JAIL
+done
+
+# last item has no comma
+echo -e "\t{\"{#F2BJAIL}\":\"$LAST\"}"
+
+echo -e "\t]"
+echo -e "}"
+

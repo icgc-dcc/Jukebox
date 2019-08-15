@@ -1,0 +1,7 @@
+##zabbix sudoers files
+
+{% for line in zabbix_agent_sudoers %}
+##{{line.comments}}
+{{line.sudo}}
+
+{% endfor %}

@@ -1,0 +1,14 @@
+---
+
+- include: zabbix_agent.yml
+- include: irqbalance.yml
+- include: megaraid.yml
+- include: iptstate.yml
+
+- include: zabbix_scripts.yml
+  when: zabbix_agent_custom_scripts_deploy
+
+#- name: SSH Tunnel management for zabbix
+#  include: mon_user.yml
+#  when: zabbix_agent_tunnel 
+

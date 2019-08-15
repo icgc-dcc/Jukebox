@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo /sbin/ip netns exec $1 iptables -L -n -t nat | grep -c 9697

@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo /sbin/ip netns exec $1 netstat -plant| grep LISTEN | grep -c 9697

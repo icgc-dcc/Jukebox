@@ -1,0 +1,4 @@
+---
+- name: install iptstate
+  apt: name=iptstate state=present
+

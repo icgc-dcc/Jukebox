@@ -1,0 +1,42 @@
+##Ansible managed: /root/playbooks/Openstack_Scinet/openstack/roles/zabbix_agent/templates/conf/zabbix-sudeors.j2 modified on 2015-03-11 18:25:31 by root on infra
+##zabbix sudors files
+Defaults:zabbix !syslog
+
+##Discovery for disks
+zabbix  ALL=NOPASSWD: /etc/zabbix/zabbix_custom_scripts/discovery_disks.pl
+zabbix  ALL=NOPASSWD: /etc/zabbix/zabbix_custom_scripts/ceph_disks_health_check.sh
+zabbix  ALL=NOPASSWD: /etc/zabbix/sas3ircu
+zabbix ALL = (root) NOPASSWD: /usr/local/bin/megacli
+
+##RAID special privileges
+zabbix  ALL=NOPASSWD:   /sbin/mdadm --detail *, /sbin/vgs
+
+##IPTSTATE special privileges
+zabbix  ALL=NOPASSWD:   /usr/sbin/iptstate
+
+##FAIL2BAN special permissions
+zabbix  ALL=NOPASSWD:   /usr/bin/fail2ban-client
+
+##IPTABLES special privileges
+zabbix  ALL=NOPASSWD:   /sbin/iptables
+
+##SMARTCTL special privileges
+zabbix  ALL=NOPASSWD:   /usr/sbin/smartctl
+
+##Parted special privileges
+zabbix  ALL=NOPASSWD:   /sbin/parted
+
+## Ip netns special privileges
+zabbix  ALL=NOPASSWD:   /sbin/ip
+zabbix  ALL=NOPASSWD:   /usr/local/sbin/sudo_shim
+zabbix  ALL=NOPASSWD:   /usr/local/sbin/sudo_shim_meta
+zabbix  ALL=NOPASSWD:   /usr/bin/ovs-vsctl
+
+##ipmitool for powersupply checks
+zabbix  ALL=NOPASSWD:   /usr/bin/ipmitool
+
+##needed for df
+zabbix  ALL=NOPASSWD:   /bin/df
+
+##needed for counting the Jupyter docker container
+zabbix  ALL=NOPASSWD:   /usr/bin/docker

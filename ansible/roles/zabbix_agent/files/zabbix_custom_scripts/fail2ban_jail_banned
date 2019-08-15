@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo /usr/bin/fail2ban-client status $1 | /bin/grep "Currently banned:" | /bin/grep -o -E "[0-9]*"
+
