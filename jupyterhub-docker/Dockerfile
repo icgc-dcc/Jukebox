@@ -1,5 +1,5 @@
-FROM jupyterhub/jupyterhub
-ARG JUPYTERHUB_VERSION=0.8 
+FROM jupyterhub/jupyterhub:${VERSION}
+ARG VERSION=latest
 ARG SERVICE_DIR=/srv/jupyterhub
 ARG SSL_DIR=/srv/jupyterhub/ssl
 ARG PYTHON_LIB=/opt/conda/lib/python3.6/site-packages
