@@ -13,7 +13,7 @@
   template:
     src: "{{ item }}"
     dest: "{{ run_dir }}"
-  with_items: ['jukebox.sh', 'reset.sh', 'docker-compose.yml']
+  with_items: ['jukebox.sh', 'docker-compose.yml']
 
 - name: Set permissions on all our executable files 
   shell: "warn=false chmod 755 {{ run_dir }}/*"

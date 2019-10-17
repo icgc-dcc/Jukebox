@@ -10,7 +10,10 @@
     - "../vars/jupyter_notebook.yml"
     - "../vars/certbot.yml"
     - "../vars/oauth.yml"
+    - "../vars/ego.yml"
     - "{{ oauth_secrets }}"
+    - "{{ ego_secrets }}"
+
   roles: 
     - "../roles/notebook"
   become: true
