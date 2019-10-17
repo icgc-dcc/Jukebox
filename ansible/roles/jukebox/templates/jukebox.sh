@@ -1,3 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 cd {{ run_dir }}
-docker-compose up
+docker-compose down
+docker-compose up -d
